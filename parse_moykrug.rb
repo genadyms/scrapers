@@ -56,18 +56,31 @@ def parse(skill, url)
 		if total_count.empty?
 			total_count = document.css('#jobs_list_title').text
 		end
-		url = next_page document
-	    all_jobs << create_jobs(document)
+		url = false
+		# url = next_page document
+	 #    all_jobs << create_jobs(document)
 	end
 
-	puts all_jobs
+	# print jobs
+	# puts all_jobs
 	puts "#{skill} => #{total_count}, обработано #{all_jobs.size}"	
 end
 # total list vacancies
 # url = 'https://career.habr.com/vacancies?currency=rur&type=all'
 
 # ror remote sallary first page 
-data_for_parse = {'RoR' => 'https://career.habr.com/vacancies?skills%5B%5D=1080&currency=rur&remote=1' }
+data_for_parse = {
+	'RoR' => 'https://career.habr.com/vacancies?skills%5B%5D=1080&currency=rur&remote=1',
+	'Django' => 'https://career.habr.com/vacancies?skills%5B%5D=1075&currency=rur&remote=1',
+	'Flask' => 'https://career.habr.com/vacancies?skills%5B%5D=321&currency=rur&remote=1',
+	'Laravel' => 'https://career.habr.com/vacancies?skills%5B%5D=109&currency=rur&remote=1',
+	'Symfony' => 'https://career.habr.com/vacancies?skills%5B%5D=191&currency=rur&remote=1',
+	'Yii' => 'https://career.habr.com/vacancies?skills%5B%5D=647&currency=rur&remote=1',
+	# 'Angular' => '',
+	# 'React' => '',
+	# 'Nodejs' => '',
+	'Java' => 'https://career.habr.com/vacancies?skills%5B%5D=1012&currency=rur&remote=1'
+}
 
 data_for_parse.each do | skill, url |
 	parse skill, url
