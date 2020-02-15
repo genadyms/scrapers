@@ -41,23 +41,34 @@ def next_page(document)
   	"#{@host}#{all_pages.last.attributes["href"].value}"
   end
 end
+
+def get_document url
+	Nokogiri::HTML open(url) { | result | result.read }
+end
+
+
+def parse(skill, url)
+	total_count = ''
+	all_jobs = []
+
+	while url
+		document = get_document url
+		if total_count.empty?
+			total_count = document.css('#jobs_list_title').text
+		end
+		url = next_page document
+	    all_jobs << create_jobs(document)
+	end
+
+	puts all_jobs
+	puts "#{skill} => #{total_count}, обработано #{all_jobs.size}"	
+end
 # total list vacancies
 # url = 'https://career.habr.com/vacancies?currency=rur&type=all'
 
 # ror remote sallary first page 
-url='https://career.habr.com/vacancies?skills%5B%5D=1080&currency=rur&remote=1'
+data_for_parse = {'RoR' => 'https://career.habr.com/vacancies?skills%5B%5D=1080&currency=rur&remote=1' }
 
-html = open(url) { | result | result.read }
-document = Nokogiri::HTML(html)
-total_count = document.css('#jobs_list_title').text
-next_page_link = next_page document
-all_jobs = create_jobs(document)
-
-while next_page_link
-	html = open(next_page_link) { | result | result.read }
-	document = Nokogiri::HTML(html)
-	next_page_link = next_page document
-    all_jobs << create_jobs(document)
+data_for_parse.each do | skill, url |
+	parse skill, url
 end
-puts all_jobs
-puts "#{total_count} и пропаршено #{all_jobs.size}"
