@@ -15,23 +15,31 @@ class Job
 		"Title: #{@title}\r\nLink: #{@link}\r\nSkills: #{@skills}\r\nSalary: #{@salary}\r\n\r\n"
 	end
 end
+
+
+
+def create_jobs(document)
+	host = 'https://career.habr.com'
+	data = []
+	document.css('div.job').each do | job |
+		link = "#{ host }#{ job.css('a.job_icon')[0].attributes['href'].value }"
+		title = job.css('div.info div.title a').text
+	    skills = job.css('div.skills a.skill').map { |el| el.children[0].text }
+	    salary = job.css('div.salary div.count').text
+	    job = Job.new title, link, skills, salary
+	    data << job
+	    puts job
+	end
+	data
+end
 # total list vacancies
 # url = 'https://career.habr.com/vacancies?currency=rur&type=all'
 
-# ror remote sallary first page
-host = 'https://career.habr.com' 
+# ror remote sallary first page 
 url='https://career.habr.com/vacancies?skills%5B%5D=1080&currency=rur&remote=1'
 # id="jobs_list_title"
 html = open(url) { | result | result.read }
 document = Nokogiri::HTML(html)
 total_count = document.css('#jobs_list_title').text
-data = []
-document.css('div.job').each do | job |
-	link = "#{ host }#{ job.css('a.job_icon')[0].attributes['href'].value }"
-	title = job.css('div.info div.title a').text
-    skills = job.css('div.skills a.skill').map { |el| el.children[0].text }
-    salary = job.css('div.salary div.count').text
-    job = Job.new title, link, skills, salary
-    data << job
-    puts job
-end
+create_jobs(document).each { |job| puts job}
+
